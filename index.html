@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Keşfet Türkiye — Muğla ve Fethiye</title>
+  <meta name="description" content="Fethiye, Göcek, Dalyan, Marmaris, Datça, Bodrum, Milas ve Akyaka için plaj, koy, antik kent, tekne, yemek ve gün gün rota." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect fill='%2311464a' width='64' height='64' rx='14'/%3E%3Cpath fill='%23e7c27a' d='M8 40c8-14 14-18 24-18s16 4 24 18c-8 4-16 6-24 6s-16-2-24-6z'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,560&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
+</head>
+<body>
+  <a class="skip" href="#kesfet">Duraklara geç</a>
+  <header class="nav">
+    <a class="brand" href="#ev" data-go="ev">
+      <small>Muğla · Fethiye</small>
+      <strong>Keşfet Türkiye</strong>
+    </a>
+    <nav class="nav-links">
+      <button type="button" data-go="ev">Ev</button>
+      <button type="button" data-go="kesfet">Duraklar</button>
+      <button type="button" data-go="harita">Harita</button>
+      <button type="button" data-go="rotalar">Rotalar</button>
+      <button type="button" data-go="lezzet">Lezzet</button>
+      <button type="button" data-go="rehber">Rehber</button>
+      <button type="button" data-go="listem">Listem</button>
+      <button type="button" data-go="rezerve">Rezerve</button>
+      <a href="tatil.html">Tatil</a>
+    </nav>
+    <button class="nav-cta" type="button" data-go="kesfet">Gezmeye başla</button>
+  </header>
+
+  <main id="ust">
+    <div class="screen active" id="screen-ev" data-screen="ev">
+    <section class="hero">
+      <div>
+        <p class="kicker">Ege'nin bu kıyısı</p>
+        <h1>Keşfet Türkiye</h1>
+        <p class="lede">Fethiye lagününden Knidos burnuna, Saklıkent'ten Bafa'ya. Muğla turizmi için plaj, koy, antik kent, tekne, mutfak ve gün gün rota tek yerde.</p>
+        <div class="hero-actions">
+          <button class="btn" type="button" data-go="rotalar">Bir rota seç</button>
+          <a class="btn ghost" href="tatil.html">Otel, tur, araç</a>
+        </div>
+        <div class="stats">
+          <div><strong id="stat-count">0</strong><span>durak</span></div>
+          <div><strong>9</strong><span>bölge</span></div>
+          <div><strong>4</strong><span>hazır rota</span></div>
+        </div>
+      </div>
+      <figure class="hero-frame">
+        <img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/%C3%96l%C3%BCdeniz_lagoon.jpg/1280px-%C3%96l%C3%BCdeniz_lagoon.jpg" alt="Ölüdeniz lagünü" />
+        <figcaption class="hero-cap"><strong>Ölüdeniz</strong><span>Fethiye'nin korunan lagünü. Tekneler içeri girmez.</span></figcaption>
+      </figure>
+    </section>
+
+    <aside class="season" aria-label="Bu ay">
+      <b>Bu ay</b>
+      <p id="season-note"></p>
+    </aside>
+
+    <section class="section" id="bolgeler">
+      <div class="section-head">
+        <h2>Önce bir kıyı seçin</h2>
+        <p>Fethiye ayrıntılıdır. Göcek, Dalyan, Marmaris, Datça, Bodrum, Milas ve Akyaka aynı rehberde. Kaş ve Patara, il sınırı diye ayrıca işaretlidir.</p>
+      </div>
+      <div class="region-grid" id="region-grid"></div>
+    </section>
+    </div>
+
+    <div class="screen" id="screen-kesfet" data-screen="kesfet">
+    <div class="search-row">
+      <label class="sr" for="q" style="position:absolute;left:-999px">Durak ara</label>
+      <input id="q" type="search" placeholder="Ölüdeniz, caretta, Knidos, çökertme, Likya…" autocomplete="off" />
+      <button class="btn tiny" type="button" id="clear-q">Temizle</button>
+    </div>
+
+    <div class="filters" id="filters">
+      <div id="region-filters"></div>
+      <div id="cat-filters"></div>
+    </div>
+
+    <section class="section" id="kesfet">
+      <div class="section-head">
+        <h2>Bütün duraklar</h2>
+        <p id="result-count" class="count"></p>
+      </div>
+      <div class="card-grid" id="place-grid"></div>
+    </section>
+    </div>
+
+    <div class="screen" id="screen-harita" data-screen="harita">
+    <section class="section" id="harita">
+      <div class="section-head">
+        <h2>Haritada</h2>
+        <p>İşaret bir duraktır. Bölgeye basınca harita oraya yaklaşır, işarete basınca kart açılır.</p>
+      </div>
+      <div class="layout-2">
+        <div class="map-side" id="map-side"></div>
+        <div class="map-wrap"><div id="map"></div></div>
+      </div>
+    </section>
+    </div>
+
+    <div class="screen" id="screen-rotalar" data-screen="rotalar">
+    <section class="section" id="rotalar">
+      <div class="section-head">
+        <h2>Gün gün rota</h2>
+        <p>Üç, beş ve yedi gün ile yalnız taş meraklısı için dört gün. Günlerin içindeki adlar karta gider.</p>
+      </div>
+      <div class="route-switch" id="route-switch"></div>
+      <article class="route" id="route-body"></article>
+    </section>
+    </div>
+
+    <div class="screen" id="screen-lezzet" data-screen="lezzet">
+    <section class="section" id="lezzet">
+      <div class="section-head">
+        <h2>Ne yenir</h2>
+        <p>Lokanta listesi değil. Hangi yemeğin hangi kıyıda aranacağı.</p>
+      </div>
+      <div class="food-grid" id="food-grid"></div>
+    </section>
+
+    <section class="section" id="konaklama">
+      <div class="section-head">
+        <h2>Nerede kalınır</h2>
+        <p>Otel adı yok. Semtin nasıl bir gün vaat ettiği var.</p>
+      </div>
+      <div class="stay-grid" id="stay-grid"></div>
+    </section>
+    </div>
+
+    <div class="screen" id="screen-rehber" data-screen="rehber">
+    <section class="section" id="rehber">
+      <div class="section-head">
+        <h2>Pratik rehber</h2>
+        <p>Havalimanı, dönem, bütçenin nereye gittiği ve kıyıyı yormadan gezmek.</p>
+      </div>
+      <div class="guide-grid" id="guide-grid"></div>
+    </section>
+    </div>
+
+    <div class="screen" id="screen-rezerve" data-screen="rezerve">
+      <section class="section" id="rezerve">
+        <div class="section-head">
+          <h2>Rezervasyon</h2>
+          <p>Tarih ve kişi sayısını seçin. Kayıt bu cihazda durur; bir otele veya tekneye kendiliğinden gitmez.</p>
+        </div>
+        <form class="book" id="rez-form">
+          <label>Durak
+            <select id="rez-place" required></select>
+          </label>
+          <label>Tarih
+            <input id="rez-date" type="date" required />
+          </label>
+          <label>Kişi
+            <input id="rez-people" type="number" min="1" max="20" value="2" required />
+          </label>
+          <label>Ad
+            <input id="rez-name" type="text" maxlength="80" required placeholder="Ad soyad" />
+          </label>
+          <label>Telefon
+            <input id="rez-phone" type="tel" required placeholder="05xx" />
+          </label>
+          <label class="wide">Not
+            <textarea id="rez-note" rows="3" maxlength="240" placeholder="Sabah turu, çocuk koltuğu, oda isteği"></textarea>
+          </label>
+          <div class="wide book-actions">
+            <button class="btn" type="submit">Rezervasyonu kaydet</button>
+            <p id="rez-msg" class="count"></p>
+          </div>
+        </form>
+        <div class="book-list" id="rez-list"></div>
+      </section>
+    </div>
+
+    <div class="screen" id="screen-listem" data-screen="listem">
+      <section class="section" id="listem">
+        <div class="section-head">
+          <h2>Gezi listem</h2>
+          <p id="list-count" class="count"></p>
+        </div>
+        <div class="card-grid" id="list-grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <nav class="dock" aria-label="Uygulama">
+    <button type="button" data-go="ev">Ev</button>
+    <button type="button" data-go="kesfet">Keşfet</button>
+    <button type="button" data-go="harita">Harita</button>
+    <button type="button" data-go="rotalar">Rota</button>
+    <button type="button" data-go="lezzet">Lezzet</button>
+    <button type="button" data-go="rehber">Rehber</button>
+    <button type="button" data-go="listem">Listem</button>
+    <button type="button" data-go="rezerve">Rezerve</button>
+  </nav>
+
+  <footer class="footer">
+    <div><strong>Keşfet Türkiye</strong><br />Muğla ve Fethiye gezi rehberi.</div>
+    <div>Fotoğraflar Wikimedia Commons. Harita verisi OpenStreetMap. Giriş ücretleri ve Müze Kart listesi değişir; gişedeki tarifeyi esas alın.</div>
+  </footer>
+
+  <dialog id="place-dialog"></dialog>
+  <noscript><p style="padding:24px">Bu rehber listeyi açmak için JavaScript kullanır.</p></noscript>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js?v=3"></script>
+</body>
+</html>

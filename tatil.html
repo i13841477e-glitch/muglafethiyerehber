@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keşfet Türkiye — Tatil ve rezervasyon</title>
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --secondary: #f97316;
+      --dark: #0f172a;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --card-bg: #ffffff;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: var(--light); color: var(--dark); line-height: 1.6; }
+    header { background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.08); position: sticky; top: 0; z-index: 1000; }
+    .navbar { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 1rem 2rem; gap: 1rem; }
+    .logo { font-size: 1.35rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+    .nav-links { display: flex; list-style: none; gap: 1.2rem; flex-wrap: wrap; }
+    .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; }
+    .nav-links a:hover { color: var(--primary); }
+    .hero {
+      background: linear-gradient(rgba(15, 23, 42, .6), rgba(15, 23, 42, .6)), url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80") center/cover no-repeat;
+      color: white; text-align: center; padding: 5rem 1rem 6rem;
+    }
+    .hero h1 { font-size: 2.4rem; margin-bottom: 1rem; }
+    .hero p { font-size: 1.15rem; max-width: 640px; margin: 0 auto; }
+    .search-widget {
+      background: white; max-width: 900px; margin: -3rem auto 2rem; padding: 1.5rem; border-radius: 12px;
+      box-shadow: var(--shadow); display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: end;
+    }
+    .form-group { display: flex; flex-direction: column; text-align: left; }
+    .form-group label { font-size: .85rem; font-weight: 600; margin-bottom: .4rem; color: var(--gray); }
+    .form-group select, .form-group input, .modal input, .modal textarea, .modal select {
+      padding: .75rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; font-size: .95rem; width: 100%;
+    }
+    .btn-search, .btn-book {
+      background: var(--secondary); color: white; border: none; padding: .75rem 1.2rem; border-radius: 6px;
+      font-weight: 600; cursor: pointer;
+    }
+    .btn-search:hover, .btn-book:hover { background: #ea580c; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 1rem 2rem 2rem; }
+    .section-title { text-align: center; font-size: 1.8rem; }
+    .section-subtitle { text-align: center; color: var(--gray); margin: .4rem 0 1.6rem; }
+    .category-tabs { display: flex; justify-content: center; gap: .7rem; margin-bottom: 1.6rem; flex-wrap: wrap; }
+    .tab-btn { background: #e2e8f0; border: none; padding: .6rem 1.1rem; border-radius: 20px; cursor: pointer; font-weight: 600; color: var(--gray); }
+    .tab-btn.active, .tab-btn:hover { background: var(--primary); color: white; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+    .card-img { height: 190px; width: 100%; object-fit: cover; background: #e2e8f0; }
+    .card-body { padding: 1.1rem; display: flex; flex-direction: column; flex-grow: 1; }
+    .badge { align-self: flex-start; background: #e0f2fe; color: var(--primary-dark); font-size: .75rem; font-weight: 700; padding: .25rem .6rem; border-radius: 4px; text-transform: uppercase; margin-bottom: .45rem; }
+    .card-title { font-size: 1.12rem; margin-bottom: .4rem; }
+    .card-desc { font-size: .9rem; color: var(--gray); margin-bottom: 1rem; flex-grow: 1; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; gap: .6rem; border-top: 1px solid #f1f5f9; padding-top: .8rem; }
+    .price { font-size: 1.05rem; font-weight: 700; }
+    .price span { display: block; font-size: .75rem; color: var(--gray); font-weight: 500; }
+    .ad-banner {
+      background: linear-gradient(90deg, #1e293b, #334155); color: white; border-radius: 12px; padding: 2rem;
+      margin: 2.5rem 0; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    .mine { margin-top: 1rem; display: grid; gap: .7rem; }
+    .mine article { background: white; border-radius: 10px; padding: .9rem 1rem; box-shadow: var(--shadow); display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+    .ghost { background: #e2e8f0; color: var(--dark); border: 0; border-radius: 6px; padding: .45rem .8rem; cursor: pointer; font-weight: 600; }
+    footer { background: var(--dark); color: #94a3b8; padding: 2.5rem 1rem 1.4rem; margin-top: 3rem; }
+    .footer-grid { max-width: 1200px; margin: 0 auto 1.4rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+    .footer-col h4 { color: white; margin-bottom: .6rem; }
+    .footer-col a { color: #94a3b8; text-decoration: none; }
+    .copyright { text-align: center; border-top: 1px solid #334155; padding-top: 1rem; max-width: 1200px; margin: 0 auto; font-size: .85rem; }
+    dialog { width: min(480px, calc(100% - 24px)); border: 0; border-radius: 14px; padding: 0; }
+    dialog::backdrop { background: rgba(15, 23, 42, .55); }
+    .modal { padding: 1.2rem; display: grid; gap: .7rem; }
+    .modal h3 { font-size: 1.25rem; }
+    .modal-actions { display: flex; gap: .5rem; justify-content: flex-end; }
+    .msg { color: var(--primary-dark); font-weight: 600; min-height: 1.2em; }
+    @media (max-width: 768px) {
+      .navbar { flex-direction: column; }
+      .hero h1 { font-size: 1.7rem; }
+      .search-widget { margin-top: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <a href="index.html" class="logo">Keşfet Türkiye</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Rehber</a></li>
+        <li><a href="#konaklama">Konaklama</a></li>
+        <li><a href="#aktiviteler">Aktiviteler</a></li>
+        <li><a href="#arac-kiralama">Araç</a></li>
+        <li><a href="#kayitlar">Kayıtlarım</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Tatili buradan ayırt</h1>
+    <p>Fethiye, Göcek, Dalyan, Marmaris, Datça, Bodrum ve Kaş için konaklama, tur ve araç. Fiyatlar örnek başlangıçtır; kesin ücret rezervasyon kaydında netleşmez, yerinde doğrulanır.</p>
+  </section>
+
+  <div class="search-widget">
+    <div class="form-group">
+      <label for="location">Bölge</label>
+      <select id="location">
+        <option value="hepsi">Tüm bölgeler</option>
+        <option value="fethiye">Fethiye / Ölüdeniz</option>
+        <option value="gocek">Göcek</option>
+        <option value="dalyan">Dalyan</option>
+        <option value="marmaris">Marmaris</option>
+        <option value="akyaka">Akyaka</option>
+        <option value="bodrum">Bodrum</option>
+        <option value="kas">Kaş</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="category-select">Hizmet</label>
+      <select id="category-select">
+        <option value="hepsi">Tümü</option>
+        <option value="otel">Otel ve villa</option>
+        <option value="aktivite">Aktivite ve tur</option>
+        <option value="arac">Araç kiralama</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="date">Tarih</label>
+      <input type="date" id="date" />
+    </div>
+    <button class="btn-search" type="button" id="do-search">Arama yap</button>
+  </div>
+
+  <main class="container">
+    <h2 class="section-title" id="konaklama">Tatil seçenekleri</h2>
+    <p class="section-subtitle" id="aktiviteler">Konaklama, tur ve araç aynı listede. Rezerve et deyince kayıt bu tarayıcıda tutulur.</p>
+    <div class="category-tabs" id="arac-kiralama">
+      <button class="tab-btn active" type="button" data-cat="hepsi">Tümü</button>
+      <button class="tab-btn" type="button" data-cat="otel">Otel ve villa</button>
+      <button class="tab-btn" type="button" data-cat="aktivite">Aktivite ve tur</button>
+      <button class="tab-btn" type="button" data-cat="arac">Araç kiralama</button>
+    </div>
+    <div class="grid" id="card-grid"></div>
+
+    <div class="ad-banner">
+      <div>
+        <h3>Araç için Dalaman veya merkez teslim</h3>
+        <p>Listedeki araç paketleri örnek günlüktür. Tarihi arama kutusundan seçip Rezerve et deyin.</p>
+      </div>
+      <button class="btn-search" type="button" id="show-cars">Araçları göster</button>
+    </div>
+
+    <h2 class="section-title" id="kayitlar">Kayıtlarım</h2>
+    <p class="section-subtitle">Rehberdeki Rezerve ekranı da bu listeyi okur.</p>
+    <div class="mine" id="mine"></div>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Keşfet Türkiye</h4>
+        <p>Muğla ve Fethiye gezi rehberi ile tatil kaydı aynı sitede.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Rehber</h4>
+        <p><a href="index.html">Duraklar, harita ve rotalar</a></p>
+      </div>
+    </div>
+    <div class="copyright">Örnek fiyatlar ilan tarifesi değildir. Kayıt bir işletmeye otomatik iletilmez.</div>
+  </footer>
+
+  <dialog id="book">
+    <form class="modal" id="book-form">
+      <h3 id="book-title">Rezervasyon</h3>
+      <p id="book-meta" style="color:#64748b"></p>
+      <label>Tarih <input type="date" id="book-date" required /></label>
+      <label>Kişi <input type="number" id="book-people" min="1" max="12" value="2" required /></label>
+      <label>Ad <input type="text" id="book-name" required maxlength="80" placeholder="Ad soyad" /></label>
+      <label>Telefon <input type="tel" id="book-phone" required placeholder="05xx" /></label>
+      <label>Not <textarea id="book-note" rows="3" maxlength="240" placeholder="Giriş saati, bebek koltuğu, sabah turu"></textarea></label>
+      <p class="msg" id="book-msg"></p>
+      <div class="modal-actions">
+        <button class="ghost" type="button" id="book-close">Vazgeç</button>
+        <button class="btn-book" type="submit">Kaydet</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    const KEY = "kesfet-turkiye-reservations";
+    const items = [
+      { id: "villa-oludeniz", title: "Ölüdeniz havuzlu villa", category: "otel", location: "fethiye", price: "₺4.500", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80", desc: "Belcekız’a yakın, küçük bir villa kurgusu. Kapasite ve havuz yerinde sorulur." },
+      { id: "calis-otel", title: "Çalış sahil oteli", category: "otel", location: "fethiye", price: "₺3.200", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80", desc: "Gün batımına bakan oda. Merkez dolmuşuna yürüme mesafesi düşünülür." },
+      { id: "faralya", title: "Faralya bungalov", category: "otel", location: "fethiye", price: "₺2.800", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80", desc: "Kabak sırtında sakin gece. Akşam market için Fethiye’ye inmek gerekir." },
+      { id: "kayakoy-ev", title: "Kayaköy taş ev", category: "otel", location: "fethiye", price: "₺2.400", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80", desc: "Taş köyün kıyısında iki gece. Ölüdeniz dolmuşu köye kadar gelir." },
+      { id: "gocek-oda", title: "Göcek marina yanı oda", category: "otel", location: "gocek", price: "₺3.600", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1610641818989-c2051b5e2cfd?auto=format&fit=crop&w=800&q=80", desc: "Sabah tekne için kısa yürüyüş. Dalaman uçağına yakındır." },
+      { id: "dalyan-pansiyon", title: "Dalyan nehir pansiyonu", category: "otel", location: "dalyan", price: "₺2.100", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80", desc: "İztuzu teknesine yürüme. Yazın sineklik sorun." },
+      { id: "akyaka-ev", title: "Akyaka ev", category: "otel", location: "akyaka", price: "₺2.600", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80", desc: "Azmak kahvaltısı ve sakin gece için bir gece yeter." },
+      { id: "bodrum-resort", title: "Bodrum koy oteli", category: "otel", location: "bodrum", price: "₺6.800", unit: "örnek / gece", image: "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80", desc: "Yarımada koylarından biri. Merkez gece hayatı için dolmuş hesaplanır." },
+      { id: "babadag", title: "Babadağ yamaç paraşütü", category: "aktivite", location: "fethiye", price: "₺3.200", unit: "örnek / kişi", image: "https://images.unsplash.com/photo-1516738901171-8eb4fc13bd20?auto=format&fit=crop&w=800&q=80", desc: "Tandem uçuş. Rüzgâr iptali normaldir; o günü boş bırakın." },
+      { id: "oniki", title: "12 Adalar tekne turu", category: "aktivite", location: "fethiye", price: "₺1.200", unit: "örnek / kişi", image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80", desc: "Tam gün, öğle yemeği çoğu teknede vardır. Kalkış Fethiye veya Göcek." },
+      { id: "dalis", title: "Fethiye tüplü dalış", category: "aktivite", location: "fethiye", price: "₺1.800", unit: "örnek / kişi", image: "https://images.unsplash.com/photo-1544551763-77ef2d0cfc6c?auto=format&fit=crop&w=800&q=80", desc: "Adalar çevresinde tek dalış. Belge ve sağlık beyanı işletmede sorulur." },
+      { id: "kas-dalis", title: "Kaş dalış günü", category: "aktivite", location: "kas", price: "₺1.900", unit: "örnek / kişi", image: "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?auto=format&fit=crop&w=800&q=80", desc: "Fethiye’den günübirlik Kaş. Yol iki saatten uzundur." },
+      { id: "saklikent-tur", title: "Saklıkent ve Tlos günü", category: "aktivite", location: "fethiye", price: "₺1.400", unit: "örnek / kişi", image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80", desc: "Kanyon ve antik kent. Su ayakkabısı gerekir." },
+      { id: "dalaman-arac", title: "Dalaman teslim otomatik araç", category: "arac", location: "fethiye", price: "₺950", unit: "örnek / gün", image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80", desc: "Havalimanı teslim örnek paket. Ehliyet ve yaş sınırı kiralayan firmaya göredir." },
+      { id: "fethiye-arac", title: "Fethiye merkez araç", category: "arac", location: "fethiye", price: "₺900", unit: "örnek / gün", image: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80", desc: "Şehir içi teslim. Saklıkent ve Datça yolu için araç rahat eder." },
+      { id: "bodrum-arac", title: "Bodrum araç", category: "arac", location: "bodrum", price: "₺1.100", unit: "örnek / gün", image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80", desc: "Milas-Bodrum havalimanı veya merkez. Yarımada dolmuşla da gezilir." }
+    ];
+
+    let activeCat = "hepsi";
+    let booking = null;
+
+    function todayISO() {
+      const d = new Date();
+      return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+    function load() {
+      try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+      catch (e) { return []; }
+    }
+    function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+    function badge(cat) {
+      if (cat === "otel") return "Konaklama";
+      if (cat === "aktivite") return "Aktivite";
+      return "Araç";
+    }
+    function currentFilter() {
+      const loc = document.getElementById("location").value;
+      const catSelect = document.getElementById("category-select").value;
+      const cat = catSelect !== "hepsi" ? catSelect : activeCat;
+      return items.filter((item) => (loc === "hepsi" || item.location === loc) && (cat === "hepsi" || item.category === cat));
+    }
+    function renderCards() {
+      const data = currentFilter();
+      const grid = document.getElementById("card-grid");
+      if (!data.length) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#64748b">Bu süzgeçte seçenek yok.</p>';
+        return;
+      }
+      grid.innerHTML = data.map((item) => `
+        <article class="card">
+          <img class="card-img" alt="" src="${item.image}" />
+          <div class="card-body">
+            <span class="badge">${badge(item.category)}</span>
+            <h3 class="card-title">${item.title}</h3>
+            <p class="card-desc">${item.desc}</p>
+            <div class="card-footer">
+              <div class="price">${item.price}<span>${item.unit}</span></div>
+              <button class="btn-book" type="button" data-book="${item.id}">Rezerve et</button>
+            </div>
+          </div>
+        </article>`).join("");
+      grid.querySelectorAll("img").forEach((img) => {
+        img.addEventListener("error", () => { img.style.display = "none"; });
+      });
+    }
+    function renderMine() {
+      const box = document.getElementById("mine");
+      const list = load().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      box.innerHTML = list.length ? list.map((r) => {
+        const known = items.find((item) => item.id === r.placeId);
+        const label = r.title || (known ? known.title : r.placeId);
+        return `
+        <article>
+          <div><strong>${r.code}</strong> ${label}<br><span style="color:#64748b">${r.date} · ${r.people} kişi · ${r.name}</span></div>
+          <button class="ghost" type="button" data-cancel="${r.id}">İptal</button>
+        </article>`;
+      }).join("") : "<p style='color:#64748b'>Henüz kayıt yok.</p>";
+    }
+    function openBook(id) {
+      booking = items.find((item) => item.id === id);
+      if (!booking) return;
+      document.getElementById("book-title").textContent = booking.title;
+      document.getElementById("book-meta").textContent = booking.price + " " + booking.unit;
+      const date = document.getElementById("book-date");
+      const picked = document.getElementById("date").value;
+      date.min = todayISO();
+      date.value = picked && picked >= date.min ? picked : date.min;
+      document.getElementById("book-msg").textContent = "";
+      document.getElementById("book").showModal();
+    }
+
+    document.getElementById("date").min = todayISO();
+    document.getElementById("do-search").addEventListener("click", () => {
+      const cat = document.getElementById("category-select").value;
+      if (cat !== "hepsi") {
+        activeCat = cat;
+        document.querySelectorAll(".tab-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.cat === cat));
+      }
+      renderCards();
+    });
+    document.querySelector(".category-tabs").addEventListener("click", (event) => {
+      const btn = event.target.closest(".tab-btn");
+      if (!btn) return;
+      activeCat = btn.dataset.cat;
+      document.getElementById("category-select").value = activeCat;
+      document.querySelectorAll(".tab-btn").forEach((el) => el.classList.toggle("active", el === btn));
+      renderCards();
+    });
+    document.getElementById("show-cars").addEventListener("click", () => {
+      activeCat = "arac";
+      document.getElementById("category-select").value = "arac";
+      document.querySelectorAll(".tab-btn").forEach((el) => el.classList.toggle("active", el.dataset.cat === "arac"));
+      renderCards();
+      document.getElementById("arac-kiralama").scrollIntoView({ behavior: "smooth" });
+    });
+    document.getElementById("card-grid").addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-book]");
+      if (btn) openBook(btn.dataset.book);
+    });
+    document.getElementById("book-close").addEventListener("click", () => document.getElementById("book").close());
+    document.getElementById("book").addEventListener("click", (event) => {
+      if (event.target.id === "book") event.target.close();
+    });
+    document.getElementById("book-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const msg = document.getElementById("book-msg");
+      const date = document.getElementById("book-date").value;
+      const people = Number(document.getElementById("book-people").value);
+      const name = document.getElementById("book-name").value.trim();
+      const phone = document.getElementById("book-phone").value.trim();
+      const note = document.getElementById("book-note").value.trim();
+      if (!date || date < todayISO()) { msg.textContent = "Tarih bugün ya da sonrası olmalı."; return; }
+      if (!people || people < 1) { msg.textContent = "Kişi sayısını yazın."; return; }
+      if (name.length < 2) { msg.textContent = "Adı yazın."; return; }
+      if (phone.replace(/\D/g, "").length < 10) { msg.textContent = "Telefon en az 10 rakam olmalı."; return; }
+      const item = {
+        id: Date.now().toString(36),
+        code: "KT-" + Math.random().toString(36).slice(2, 6).toUpperCase(),
+        placeId: booking.id,
+        title: booking.title,
+        date, people, name, phone, note
+      };
+      const list = load();
+      list.push(item);
+      save(list);
+      document.getElementById("book").close();
+      renderMine();
+      document.getElementById("kayitlar").scrollIntoView({ behavior: "smooth" });
+    });
+    document.getElementById("mine").addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-cancel]");
+      if (!btn) return;
+      save(load().filter((row) => row.id !== btn.dataset.cancel));
+      renderMine();
+    });
+    renderCards();
+    renderMine();
+  </script>
+</body>
+</html>
